@@ -1086,6 +1086,13 @@ function FormBuilder(opts, element, $) {
       }),
     )
 
+    liContents.push(
+      m('div', '<small>- Required</small>', {
+        className: 'required-msg text-danger',
+        style: values.required ? 'display: block' : 'display: none',
+      })
+    )
+
     // add the help icon
     const descAttrs = {
       className: 'tooltip-element',
@@ -2313,6 +2320,7 @@ function FormBuilder(opts, element, $) {
   // Attach a callback to toggle required asterisk
   $stage.on('click', '.fld-required', e => {
     $(e.target).closest('.form-field').find('.required-asterisk').toggle()
+    $(e.target).closest('.form-field').find('.required-msg').toggle()
   })
 
   // Attach a callback to toggle roles visibility
