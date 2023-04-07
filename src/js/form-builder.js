@@ -471,6 +471,7 @@ function FormBuilder(opts, element, $) {
       paragraph: ['required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
       radio_selection: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
       check_box: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      upload: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {

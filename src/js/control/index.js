@@ -13,6 +13,7 @@ import controlSentence from './control_custom/sentence'
 import controlParagraph from './control_custom/paragraph'
 import controlRadioSelection from './control_custom/radio_selection'
 import controlCheckbox from './control_custom/checkbox'
+import controlUpload from './control_custom/upload'
 
 export default {
   controlAutocomplete,
@@ -29,4 +30,5 @@ export default {
   controlParagraph,
   controlRadioSelection,
   controlCheckbox,
+  controlUpload,
 }
