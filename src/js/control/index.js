@@ -10,6 +10,8 @@ import controlTextarea from './textarea'
 import controlTinymce from './textarea.tinymce'
 import controlQuill from './textarea.quill'
 
+import controlSentence from './sentence'
+
 export default {
   controlAutocomplete,
   controlButton,
@@ -22,4 +24,5 @@ export default {
   controlTextarea,
   controlTinymce,
   controlQuill,
+  controlSentence,
 }

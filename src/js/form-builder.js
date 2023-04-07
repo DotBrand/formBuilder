@@ -467,6 +467,8 @@ function FormBuilder(opts, element, $) {
       number: defaultAttrs.concat(['min', 'max', 'step']),
       select: defaultAttrs.concat(['multiple', 'options']),
       textarea: defaultAttrs.concat(['subtype', 'maxlength', 'rows']),
+      // custom control
+      sentence: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -584,6 +586,10 @@ function FormBuilder(opts, element, $) {
         }
         return boolAttribute('multiple', values, typeLabels[type] || typeLabels.default)
       },
+      hasOther: () => {
+        return boolAttribute('hasOther', values, {first: 'Other'})
+      },
+      otherInput: () => textAttribute('otherInput', values, false, 'Other Name'),
     }
     let key
     const roles = values.role !== undefined ? values.role.split(',') : []
@@ -948,11 +954,11 @@ function FormBuilder(opts, element, $) {
    * @param  {Boolean} isHidden
    * @return {String}
    */
-  const textAttribute = (attribute, values, isHidden = false) => {
+  const textAttribute = (attribute, values, isHidden = false, label) => {
     const textArea = ['paragraph']
 
     let attrVal = values[attribute] || ''
-    let attrLabel = mi18n.get(attribute)
+    let attrLabel = label || mi18n.get(attribute)
 
     if (attribute === 'label') {
       if (textArea.includes(values.type)) {
