@@ -467,10 +467,10 @@ function FormBuilder(opts, element, $) {
       select: defaultAttrs.concat(['multiple', 'options']),
       textarea: defaultAttrs.concat(['subtype', 'maxlength', 'rows']),
       // custom control
-      sentence: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
-      paragraph: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
-      radio_selection: ['required', 'label', 'className', 'name', 'hasOther', 'otherInput', 'options'],
-      check_box: ['required', 'label', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      sentence: ['required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      paragraph: ['required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      radio_selection: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      check_box: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -519,7 +519,7 @@ function FormBuilder(opts, element, $) {
 
         return boolAttribute('inline', values, labels)
       },
-      label: () => textAttribute('label', values),
+      label: () => textAttribute('label', values, false, 'Title'),
       description: () => textAttribute('description', values),
       subtype: () => selectAttribute('subtype', values, subtypes[type]),
       style: () => btnStyles(values.style),
@@ -588,6 +588,7 @@ function FormBuilder(opts, element, $) {
         }
         return boolAttribute('multiple', values, typeLabels[type] || typeLabels.default)
       },
+      subtitle: () => textAttribute('subtitle', values, false, 'Description'),
       hasOther: () => {
         return boolAttribute('hasOther', values, {first: 'Other'})
       },
