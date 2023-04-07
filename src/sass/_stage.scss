@@ -174,36 +174,6 @@
 
     &.button-field,
     &.header-field,
-    &.paragraph-field {
-      h1,
-      h2,
-      h3,
-      p,
-      canvas,
-      output,
-      address,
-      blockquote,
-      .prev-holder {
-        margin: 0;
-      }
-
-      .field-label {
-        display: none;
-      }
-
-      &.editing {
-        .field-label {
-          display: block;
-        }
-      }
-    }
-
-    &.paragraph-field {
-      .fld-label {
-        min-height: 150px;
-        overflow-y: auto;
-      }
-    }
 
     &.checkbox-field {
       .field-label {

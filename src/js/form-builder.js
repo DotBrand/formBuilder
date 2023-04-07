@@ -439,7 +439,7 @@ function FormBuilder(opts, element, $) {
 
   const defaultFieldAttrs = type => {
     const defaultAttrs = ['required', 'label', 'description', 'placeholder', 'className', 'name', 'access', 'value']
-    const noValFields = ['header', 'paragraph', 'file', 'autocomplete'].concat(d.optionFields)
+    const noValFields = ['header', 'file', 'autocomplete'].concat(d.optionFields)
 
     const valueField = !noValFields.includes(type)
 
@@ -463,12 +463,12 @@ function FormBuilder(opts, element, $) {
       file: defaultAttrs.concat(['subtype', 'multiple']),
       header: ['label', 'subtype', 'className', 'access'],
       hidden: ['name', 'value', 'access'],
-      paragraph: ['label', 'subtype', 'className', 'access'],
       number: defaultAttrs.concat(['min', 'max', 'step']),
       select: defaultAttrs.concat(['multiple', 'options']),
       textarea: defaultAttrs.concat(['subtype', 'maxlength', 'rows']),
       // custom control
       sentence: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      paragraph: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -485,7 +485,7 @@ function FormBuilder(opts, element, $) {
     }
 
     // Help Text / Description Field
-    if (['header', 'paragraph', 'button'].includes(type)) {
+    if (['header', 'button'].includes(type)) {
       removeFromArray('description', typeAttrs)
     }
 
@@ -955,17 +955,11 @@ function FormBuilder(opts, element, $) {
    * @return {String}
    */
   const textAttribute = (attribute, values, isHidden = false, label) => {
-    const textArea = ['paragraph']
-
     let attrVal = values[attribute] || ''
     let attrLabel = label || mi18n.get(attribute)
 
     if (attribute === 'label') {
-      if (textArea.includes(values.type)) {
-        attrLabel = mi18n.get('content')
-      } else {
-        attrVal = parsedHtml(attrVal)
-      }
+      attrVal = parsedHtml(attrVal)
     }
 
     const placeholder = mi18n.get(`placeholders.${attribute}`) || ''
@@ -1010,7 +1004,7 @@ function FormBuilder(opts, element, $) {
 
   const requiredField = fieldData => {
     const { type } = fieldData
-    const noRequire = ['header', 'paragraph', 'button']
+    const noRequire = ['header', 'button']
     const noMake = []
     let requireField = ''
 
@@ -2273,7 +2267,7 @@ function FormBuilder(opts, element, $) {
       const fieldType = $(`#${fieldID}`).attr('type')
 
       let label = $(`#label-${fieldID}`).html()
-      if (fieldType == 'hidden' || fieldType == 'paragraph') {
+      if (fieldType == 'hidden') {
         label = $(`#name-${fieldID}`).val()
       }
 
