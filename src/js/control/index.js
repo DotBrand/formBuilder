@@ -11,6 +11,8 @@ import controlQuill from './textarea.quill'
 
 import controlSentence from './control_custom/sentence'
 import controlParagraph from './control_custom/paragraph'
+import controlRadioSelection from './control_custom/radio_selection'
+import controlCheckbox from './control_custom/checkbox'
 
 export default {
   controlAutocomplete,
@@ -25,4 +27,6 @@ export default {
   controlQuill,
   controlSentence,
   controlParagraph,
+  controlRadioSelection,
+  controlCheckbox,
 }

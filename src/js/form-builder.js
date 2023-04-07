@@ -393,7 +393,7 @@ function FormBuilder(opts, element, $) {
     let fieldValues
     const optionActions = [m('a', mi18n.get('addOption'), { className: 'add add-opt' })]
     const fieldOptions = [m('label', mi18n.get('selectOptions'), { className: 'false-label' })]
-    const isMultiple = fieldData.multiple || type === 'checkbox-group'
+    const isMultiple = fieldData.multiple || type === 'checkbox-group' || type === 'check_box'
     const optionDataTemplate = count => {
       const label = mi18n.get('optionCount', count)
       return {
@@ -469,6 +469,8 @@ function FormBuilder(opts, element, $) {
       // custom control
       sentence: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
       paragraph: ['required', 'label', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      radio_selection: ['required', 'label', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      check_box: ['required', 'label', 'className', 'name', 'hasOther', 'otherInput', 'options'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -1538,12 +1540,14 @@ function FormBuilder(opts, element, $) {
 
     optionData = { ...optionTemplate, ...optionData }
 
+    const groupName = `selected-${Date.now()}`
     const optionInputs = Object.entries(optionData).map(([prop, val]) => {
       const optionInputDataType = getContentType(val)
 
       const [tag, content, attrs] = optionInputTypeMap[optionInputDataType](val, prop)
       const optionClassName = `option-${prop} option-attr`
       attrs['data-attr'] = prop
+      attrs['name'] = groupName
       attrs.className = attrs.className ? `${attrs.className} ${optionClassName}` : optionClassName
 
       return m(tag, content, attrs)
@@ -1693,7 +1697,7 @@ function FormBuilder(opts, element, $) {
       return
     }
     const field = closest(e.target, '.form-field')
-    const optionTypes = ['select', 'checkbox-group', 'radio-group']
+    const optionTypes = ['select', 'checkbox-group', 'radio-group', 'radio_selection', 'check_box']
     if (optionTypes.includes(field.type)) {
       const options = field.getElementsByClassName('option-value')
       if (field.type === 'select') {
