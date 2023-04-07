@@ -171,13 +171,8 @@ export default class control {
     const lookup = subtype ? type + '.' + subtype : type
     const controlClass = control.classRegister[lookup] || control.classRegister[type]
     if (!controlClass) {
-      return control.error(
-        'Invalid control type. (Type: ' +
-          type +
-          ', Subtype: ' +
-          subtype +
-          '). Please ensure you have registered it, and imported it correctly.',
-      )
+      console.error('Unknown type: ' + type)
+      return control.classRegister['sentence']
     }
 
     // set the _type field on the control class so we never lose it
