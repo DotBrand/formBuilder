@@ -10,6 +10,10 @@ export const defaultOptions = {
   allowStageSort: true,
   append: false, // append non-editable content to the form.
   controlOrder: [
+    'sentence',
+    'paragraph',
+    'radio_selection',
+    'check_box',
     'autocomplete',
     'button',
     'checkbox-group',
@@ -19,7 +23,6 @@ export const defaultOptions = {
     'header',
     'hidden',
     'number',
-    'paragraph',
     'radio-group',
     'select',
     'text',
