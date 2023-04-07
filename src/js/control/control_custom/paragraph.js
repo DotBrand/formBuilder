@@ -1,4 +1,4 @@
-import control from '../control'
+import control from '../../control'
 
 export default class controlParagraph extends control {
   static get definition() {
