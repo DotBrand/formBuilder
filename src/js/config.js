@@ -14,6 +14,8 @@ export const defaultOptions = {
     'paragraph',
     'radio_selection',
     'check_box',
+    'upload',
+    'color_selection',
     'autocomplete',
     'button',
     'checkbox-group',
