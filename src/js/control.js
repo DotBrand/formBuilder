@@ -171,7 +171,6 @@ export default class control {
     const lookup = subtype ? type + '.' + subtype : type
     const controlClass = control.classRegister[lookup] || control.classRegister[type]
     if (!controlClass) {
-      console.error('Unknown type: ' + type)
       return control.classRegister['sentence']
     }
 

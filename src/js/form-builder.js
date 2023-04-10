@@ -957,11 +957,12 @@ function FormBuilder(opts, element, $) {
    * @param  {String} attribute
    * @param  {Object} values
    * @param  {Boolean} isHidden
+   * @param  {String} label
    * @return {String}
    */
   const textAttribute = (attribute, values, isHidden = false, label) => {
     let attrVal = values[attribute] || ''
-    let attrLabel = label || mi18n.get(attribute)
+    let attrLabel = mi18n.get(attribute) || label
 
     if (attribute === 'label') {
       attrVal = parsedHtml(attrVal)
