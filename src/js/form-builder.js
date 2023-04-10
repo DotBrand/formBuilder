@@ -323,6 +323,10 @@ function FormBuilder(opts, element, $) {
       field.name = nameAttr(field)
     }
 
+    if (field.questionId == null) {
+      field.questionId = -1
+    }
+
     if (isNew && ['text', 'number', 'file', 'date', 'select', 'textarea', 'autocomplete'].includes(field.type)) {
       field.className = field.className || 'form-control'
     }
@@ -438,7 +442,7 @@ function FormBuilder(opts, element, $) {
   }
 
   const defaultFieldAttrs = type => {
-    const defaultAttrs = ['required', 'label', 'description', 'placeholder', 'className', 'name', 'access', 'value']
+    const defaultAttrs = ['required', 'label', 'description', 'placeholder', 'className', 'name', 'access', 'value', 'questionId']
     const noValFields = ['header', 'file', 'autocomplete'].concat(d.optionFields)
 
     const valueField = !noValFields.includes(type)
@@ -467,12 +471,13 @@ function FormBuilder(opts, element, $) {
       select: defaultAttrs.concat(['multiple', 'options']),
       textarea: defaultAttrs.concat(['subtype', 'maxlength', 'rows']),
       // custom control
-      sentence: ['required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
-      paragraph: ['required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
-      radio_selection: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
-      check_box: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
-      upload: ['required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput'],
-      color_selection: ['required', 'label', 'subtitle', 'className', 'name'],
+      sentence: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      paragraph: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      radio_selection: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      check_box: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      upload: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput'],
+      color_selection: ['questionId', 'required', 'label', 'subtitle', 'className', 'name'],
+      check_box_image: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'imageOptions'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -595,6 +600,7 @@ function FormBuilder(opts, element, $) {
         return boolAttribute('hasOther', values, {first: 'Other'})
       },
       otherInput: () => textAttribute('otherInput', values, false, 'Other Name'),
+      questionId: () => numberAttribute('questionId', values, true)
     }
     let key
     const roles = values.role !== undefined ? values.role.split(',') : []
@@ -891,7 +897,7 @@ function FormBuilder(opts, element, $) {
    * @param  {Object} values
    * @return {String} markup for number attribute
    */
-  const numberAttribute = (attribute, values) => {
+  const numberAttribute = (attribute, values, isHidden = false) => {
     const { class: classname, className, value, ...attrs } = values
     const attrVal = attrs[attribute] || value
     const attrLabel = mi18n.get(attribute) || attribute
@@ -911,6 +917,7 @@ function FormBuilder(opts, element, $) {
 
     return m('div', [inputLabel, inputWrap], {
       className: `form-group ${attribute}-wrap`,
+      style: `display: ${isHidden ? 'none' : 'block'}`
     }).outerHTML
   }
 
