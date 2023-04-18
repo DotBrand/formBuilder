@@ -32,191 +32,14 @@ const toggleBootStrap = ({ target }) => {
 document.getElementById('toggleBootstrap').addEventListener('click', toggleBootStrap, false)
 
 jQuery(function ($) {
-  const fields = [
-    {
-      type: 'autocomplete',
-      label: 'Custom Autocomplete',
-      required: true,
-      values: [
-        { label: 'SQL' },
-        { label: 'C#' },
-        { label: 'JavaScript' },
-        { label: 'Java' },
-        { label: 'Python' },
-        { label: 'C++' },
-        { label: 'PHP' },
-        { label: 'Swift' },
-        { label: 'Ruby' },
-      ],
-    },
-    {
-      label: 'Star Rating',
-      attrs: {
-        type: 'starRating',
-      },
-      icon: '🌟',
-    },
-    {
-      type: 'checkbox-group',
-      subtype: 'custom-group',
-      label: 'Custom Checkbox Group w/Sub Type',
-      required: true,
-      values: [{ label: 'Option 1' }, { label: 'Option 2' }],
-    },
-  ]
-
-  const replaceFields = [
-    {
-      type: 'textarea',
-      subtype: 'tinymce',
-      datatype: 'custom-tinymce',
-      label: 'tinyMCE',
-      required: true,
-    },
-  ]
-
-  const actionButtons = [
-    {
-      id: 'smile',
-      className: 'btn btn-success',
-      label: '😁',
-      type: 'button',
-      events: {
-        click: () => {
-          // @todo toggle options editor instead
-          alert('😁😁😁 !SMILE! 😁😁😁')
-        },
-      },
-    },
-    'save',
-  ]
-
-  const templates = {
-    starRating: function (fieldData) {
-      return {
-        field: '<span id="' + fieldData.name + '">',
-        onRender: () => {
-          $(document.getElementById(fieldData.name)).rateYo({ rating: 3.6 })
-        },
-      }
-    },
-  }
-
-  const inputSets = [
-    {
-      label: 'User Details',
-      icon: '👨',
-      name: 'user-details', // optional
-      showHeader: true, // optional
-      fields: [
-        {
-          type: 'text',
-          label: 'First Name',
-          className: 'form-control',
-        },
-        {
-          type: 'select',
-          label: 'Profession',
-          className: 'form-control',
-          values: [
-            {
-              label: 'Street Sweeper',
-              value: 'option-2',
-              selected: false,
-            },
-            {
-              label: 'Brain Surgeon',
-              value: 'option-3',
-              selected: false,
-            },
-          ],
-        },
-        {
-          type: 'textarea',
-          label: 'Short Bio:',
-          className: 'form-control',
-        },
-      ],
-    },
-    {
-      label: 'User Agreement',
-      fields: [
-        {
-          type: 'header',
-          subtype: 'h3',
-          label: 'Terms & Conditions',
-          className: 'header',
-        },
-        {
-          type: 'paragraph',
-          label:
-            'Leverage agile frameworks to provide a robust synopsis for high level overviews. Iterative approaches to corporate strategy foster collaborative thinking to further the overall value proposition. Organically grow the holistic world view of disruptive innovation via workplace diversity and empowerment.',
-        },
-        {
-          type: 'paragraph',
-          label:
-            'Bring to the table win-win survival strategies to ensure proactive domination. At the end of the day, going forward, a new normal that has evolved from generation X is on the runway heading towards a streamlined cloud solution. User generated content in real-time will have multiple touchpoints for offshoring.',
-        },
-        {
-          type: 'checkbox',
-          label: 'Do you agree to the terms and conditions?',
-        },
-      ],
-    },
-  ]
-
   const typeUserDisabledAttrs = {
     autocomplete: ['access'],
   }
 
-  const typeUserAttrs = {
-    text: {
-      shape: {
-        label: 'Class',
-        multiple: true,
-        options: {
-          'red form-control': 'Red',
-          'green form-control': 'Green',
-          'blue form-control': 'Blue',
-        },
-        style: 'border: 1px solid red',
-      },
-      readonly: {
-        label: 'readonly',
-        value: false,
-      },
-    },
-    number: {
-      volume: {
-        label: 'Volume Level',
-        value: 1,
-        max: 11,
-      },
-    },
-    'checkbox-group': {
-      'custom-group': {
-        customInput: {
-          label: 'Custom Text Field',
-          value: 'This field is added only to checkbox with specific subtype',
-          type: 'text',
-        },
-      },
-    },
-  }
-
   // test disabledAttrs
-  const disabledAttrs = ['placeholder', 'name']
+  const disabledAttrs = ['name', 'className']
 
   const fbOptions = {
-    defaultFields: [
-      {
-        className: 'form-control',
-        label: 'Default Field',
-        placeholder: 'Enter your default field value',
-        name: 'default-field-1',
-        type: 'text',
-      },
-    ],
     persistDefaultFields: true,
     disabledSubtypes: {
       text: ['password'],
@@ -244,15 +67,9 @@ jQuery(function ($) {
       enable: true,
     },
     sortableControls: true,
-    fields: fields,
-    templates: templates,
-    inputSets: inputSets,
     typeUserDisabledAttrs: typeUserDisabledAttrs,
-    typeUserAttrs: typeUserAttrs,
     disableInjectedStyle: false,
-    actionButtons: actionButtons,
-    disableFields: ['autocomplete', 'custom-tinymce'],
-    replaceFields: replaceFields,
+    disableFields: ['autocomplete', 'custom-tinymce', 'text', 'button', 'checkbox-group', 'radio-group', 'hidden', 'file', 'select', 'textarea', 'number'],
     disabledFieldButtons: {
       text: ['copy'],
     },
@@ -266,7 +83,29 @@ jQuery(function ($) {
     },
     scrollToFieldOnAdd: false,
   }
-  const formData = window.sessionStorage.getItem('formData')
+  // const formData = window.sessionStorage.getItem('formData')
+  const formData = [
+    {
+      'type': 'check_box_image',
+      'label': 'Checkbox Image',
+      'questionId': 1,
+      'imageOptions': [
+        {
+          label: 'test3',
+          options: [
+              {
+                  file: '',
+                  hashtag: 'tag1, tag2',
+              },
+              {
+                  file: '',
+                  hashtag: 'tag1, tag2, tag3',
+              },
+          ]
+        },
+      ]
+    },
+  ]
   let editing = true
 
   if (formData) {
@@ -285,7 +124,6 @@ jQuery(function ($) {
       const formRenderData = $('.build-wrap').formBuilder('getData', dataType)
       $('.render-wrap').formRender({
         formData: formRenderData,
-        templates: templates,
         dataType,
       })
       window.sessionStorage.setItem('formData', formRenderData)
@@ -294,6 +132,14 @@ jQuery(function ($) {
   }
 
   const formBuilder = $('.build-wrap').formBuilder(fbOptions)
+
+  // var debounce = null
+  // $('.build-wrap').on('formDataSave', () => {
+  //   clearTimeout(debounce)
+  //   debounce = setTimeout(function(){
+  //     console.log(formBuilder.actions.getData())
+  //  }, 200)
+  // })
 
   const fbPromise = formBuilder.promise
 
@@ -337,13 +183,6 @@ jQuery(function ($) {
     actionApi.appendChild(generateActionTable(actions, columns))
     const demoApi = document.getElementById('demo-api')
     demoApi.appendChild(generateActionTable(demoActions, columns))
-
-    if (formData && formData !== '[]') {
-      const setFormDataInputValue = document.getElementById('setData-value')
-      if (setFormDataInputValue) {
-        setFormDataInputValue.value = window.JSON.stringify(JSON.parse(formData), null, '  ')
-      }
-    }
 
     langSelect.addEventListener(
       'change',
