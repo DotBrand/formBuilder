@@ -15,6 +15,7 @@ import controlRadioSelection from './control_custom/radio_selection'
 import controlCheckbox from './control_custom/checkbox'
 import controlUpload from './control_custom/upload'
 import controlColorSelection from './control_custom/color_selection'
+import controlCheckboxImage from './control_custom/check_box_image'
 
 export default {
   controlAutocomplete,
@@ -33,4 +34,5 @@ export default {
   controlCheckbox,
   controlUpload,
   controlColorSelection,
+  controlCheckboxImage,
 }

@@ -441,6 +441,77 @@ function FormBuilder(opts, element, $) {
     return m('div', fieldOptions, { className: 'form-group field-options' }).outerHTML
   }
 
+  const imageStyleNav = fieldData => {
+    const { imageOptions, ...attr } = fieldData
+
+    if (!imageOptions) {
+      return
+    }
+
+    const navItems = imageOptions.map(o => {
+      const label = `${attr.name}-${o.label}`
+      const remove = m('button', 'x', { className: 'remove-style ms-2 btn btn-link text-decoration-none', target: label })
+      const navLink = m('div', [o.label, remove], { className: 'nav-link', id: `${label}-tab`, dataBsToggle: 'tab', dataBsTarget: `#${label}` })
+      return m('li', navLink, { className: 'nav-item', role: 'presentation' })
+    })
+
+    const navAddButton = m('button', 'Add Style +', { className: 'add add-style align-self-center mx-3 btn btn-outline-secondary', href: 'javascript:void(0)' })
+
+    const nav = m('ul', [...navItems, navAddButton], { className: 'nav nav-tabs', id: 'myTab', role: 'tablist', dataAttr: `${attr.name}` })
+
+    return nav.outerHTML
+  }
+
+  const imageFieldOptions = data => {
+    if (!data) {
+      return
+    }
+
+    const img = m('img', null, { className: 'img' ,src: `${data.file || 'https://via.placeholder.com/120?text=+'}`, style: 'max-width: 120px;' })
+    const uploadButton = m('input', null, { type: 'file', className: 'd-none upload' })
+    const imgBlock = m('label', [img, uploadButton], { className: 'w-25 text-start p-0 img-block position-relative' })
+
+    const tags = data.hashtag.split(',').map(t => {
+      return m('span', t, { className: 'p-1 px-3 me-2 border tag', style: 'display: inline-block' })
+    })
+    const editButton = m('button', 'Edit', { class: 'btn btn-outline-secondary hashtag-edit-btn' })
+    const input = m('input', null, { type: 'text', className: 'from-control hashtag-input', value: data.hashtag, style: 'display: none' })
+    const confirmButton = m('button', 'Confirm', { class: 'btn btn-outline-secondary hashtag-confirm-btn', style: 'display: none' })
+    const hashtagBlock = m('div', [tags, editButton, input, confirmButton], { className: 'w-75 d-flex align-items-center' })
+    return m('li', [imgBlock, hashtagBlock], { className: 'd-flex' })
+  }
+
+  const imageAttribute = fieldData => {
+    const fieldLabel = [m('label', 'Image Options', { className: 'false-label' })]
+
+    if (!fieldData.imageOptions) fieldData.imageOptions = []
+    const tabs = []
+    fieldData.imageOptions.map(o => {
+      const add = m('button', 'Add Image +', { className: 'add add-img pull-right btn btn-outline-secondary' })
+      const options = m('ol', o.options.map(o => imageFieldOptions(o)), { className: 'sortable-options ms-0' })
+      const optionsWrap = m('div', [options, add], { className: 'sortable-options-wrap w-100' })
+
+      const styleNameInput = m('input', null, { className: 'form-control edit-style-name flex-1 ms-3', value: o.label })
+      const inputLabel = m('label', 'Style Name', {})
+      const inputWrap = m('div', [inputLabel, styleNameInput], { className: 'my-1 mt-3 d-flex' })
+  
+      const headTitles = [
+        m('div', 'Image Options', { className: 'd-inline-block w-25', style: 'padding: 6px' }),
+        m('div', 'Hashtag', { className: 'd-inline-block w-75', style: 'padding: 6px' }),
+      ]
+      const head = m('div', headTitles, {})
+
+      const tab = m('div', [inputWrap, head, optionsWrap], { className: 'tab-pane fade', id: `${fieldData.name}-${o.label}` })
+      tabs.push(tab)
+    })
+
+    const tabsWrap = m('div', tabs, { className: 'tab-content' })
+
+    const editImage = m('div', [imageStyleNav(fieldData), tabsWrap], { className: 'input-wrap' })
+
+    return m('div', [fieldLabel, editImage], { className: 'form-group field-image-options' }).outerHTML
+  }
+
   const defaultFieldAttrs = type => {
     const defaultAttrs = ['required', 'label', 'description', 'placeholder', 'className', 'name', 'access', 'value', 'questionId']
     const noValFields = ['header', 'file', 'autocomplete'].concat(d.optionFields)
@@ -477,7 +548,7 @@ function FormBuilder(opts, element, $) {
       check_box: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
       upload: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput'],
       color_selection: ['questionId', 'required', 'label', 'subtitle', 'className', 'name'],
-      check_box_image: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'imageOptions'],
+      check_box_image: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'limit', 'imageOptions'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -600,7 +671,9 @@ function FormBuilder(opts, element, $) {
         return boolAttribute('hasOther', values, {first: 'Other'})
       },
       otherInput: () => textAttribute('otherInput', values, false, 'Other Name'),
-      questionId: () => numberAttribute('questionId', values, true)
+      imageOptions: () => imageAttribute(values),
+      questionId: () => numberAttribute('questionId', values, true),
+      limit: () => numberAttribute('limit', values, false, 30)
     }
     let key
     const roles = values.role !== undefined ? values.role.split(',') : []
@@ -2369,6 +2442,124 @@ function FormBuilder(opts, element, $) {
   })
 
   $stage.on('mouseover mouseout', '.remove, .del-button', e => $(e.target).closest('li').toggleClass('delete'))
+
+  $stage.on('change', 'input.upload', e => {
+    const $target = $(e.target)
+    const $img = $target.siblings('img.img')
+    const file = $target.get(0).files[0]
+
+    if (file) {
+      const reader = new FileReader()
+      reader.onload = () => {
+        $img.attr('src', reader.result)
+      }
+      reader.readAsDataURL(file)
+    }
+  })
+
+  $stage.on('click', '.add-style', e => {
+    const styleLength = $(e.target).siblings('.nav-item').length
+    if (styleLength >= 4) return
+    if (styleLength == 3) $(e.target).attr('disabled', true)
+
+    const lastIndex = $('.nav-item').length + 1
+    const label = `Style${lastIndex}`
+    const target = `${new Date().getTime()}`
+    const remove = m('button', 'x', { className: 'remove-style ms-2 btn btn-link text-decoration-none', target: target })
+    const navLink = m('div', [label, remove], { className: 'nav-link d-flex align-items-center', dataBsToggle: 'tab', dataBsTarget: `#${target}` })
+    const navItem = m('li', navLink, { className: 'nav-item', role: 'presentation' })
+    $(navItem).insertBefore($(e.target))
+
+    const add = m('button', 'Add Image +', { className: 'add add-img pull-right btn btn-outline-secondary' })
+    const options = m('ol', null, { className: 'sortable-options ms-0' })
+    const optionsWrap = m('div', [options, add], { className: 'sortable-options-wrap w-100' })
+
+    const styleNameInput = m('input', null, { className: 'form-control edit-style-name flex-1 ms-3', value: label })
+    const inputLabel = m('label', 'Style Name', {})
+    const inputWrap = m('div', [inputLabel, styleNameInput], { className: 'my-1 mt-3 d-flex' })
+
+    const headTitles = [
+      m('div', 'Image Options', { className: 'd-inline-block w-25', style: 'padding: 6px' }),
+      m('div', 'Hashtag', { className: 'd-inline-block w-75', style: 'padding: 6px' }),
+    ]
+    const head = m('div', headTitles, {})
+
+    const tab = m('div', [inputWrap, head, optionsWrap], { className: 'tab-pane fade', id: `${target}` })
+    const $inputWrap = $(e.target).closest('.input-wrap')
+    const $tabContent = $('.tab-content', $inputWrap)
+    $tabContent.append(tab)
+    
+    $('.nav-link', $inputWrap).removeClass('active')
+    $(`[data-bs-target="#${target}"]`).addClass('active')
+    
+    const id = `#${target}`
+    $('.tab-pane').removeClass('active')
+    $('.tab-pane').removeClass('show')
+    $(`${id}`, $inputWrap).addClass('active')
+    $(`${id}`, $inputWrap).addClass('show')
+  })
+
+  $stage.on('click', '.add-img', e => {
+    const $optionWrap = $(e.target).closest('.sortable-options-wrap')
+    const $sortableOptions = $('.sortable-options', $optionWrap)
+    $sortableOptions.append(imageFieldOptions({image: '', hashtag: 'tag'}))
+  })
+
+  $stage.on('click', '.remove-style', e => {
+    const $inputWrap = $(e.target).closest('.input-wrap')
+    const removeTarget = $(e.target).attr('target')
+    const addButton = $(e.target).closest('.nav-item').siblings('.add.add-style')
+    $(addButton).attr('disabled', false)
+    $(`.tab-pane[id=${removeTarget}]`, $inputWrap).remove()
+    $(e.target).closest('.nav-item').remove()
+  })
+
+  $stage.on('click', '.hashtag-edit-btn', e => {
+    $(e.target).siblings('input').toggle()
+    $(e.target).siblings('.hashtag-confirm-btn').toggle()
+    $(e.target).toggle()
+    $(e.target).siblings('.tag').toggle()
+  })
+
+  $stage.on('click', '.hashtag-confirm-btn', e => {
+    $(e.target).siblings('input').toggle()
+    $(e.target).siblings('.hashtag-edit-btn').toggle()
+    $(e.target).toggle()
+    $(e.target).siblings('.tag').toggle()
+  })
+
+  $stage.on('change', '.hashtag-input', e => {
+    $(e.target).siblings('.tag').remove()
+    const tags = $(e.target).val().split(',')
+    tags.map(t => {
+      if (t != '') {
+        const tag = m('span', t, { className: 'p-1 px-3 me-2 border tag', style: 'display: inline-block; display: none' })
+        $(tag).insertBefore($(e.target).siblings('.hashtag-edit-btn'))
+      }
+    })
+  })
+
+  $stage.on('click', '.nav-link', e => {
+    const $target = $(e.target)
+
+    const $inputWrap = $target.closest('.input-wrap')
+    $('.nav-link', $inputWrap).removeClass('active')
+    $target.addClass('active')
+    
+    const id = $target.attr('data-bs-target')
+    $('.tab-pane').removeClass('active')
+    $('.tab-pane').removeClass('show')
+    $(`${id}`, $inputWrap).addClass('active')
+    $(`${id}`, $inputWrap).addClass('show')
+  })
+
+  $stage.on('change paste keyup', '.edit-style-name', e => {
+    const id = $(e.target).closest('.tab-pane').get(0).id
+    const remove = m('button', 'x', { className: 'remove-style ms-2 btn btn-link text-decoration-none', target: id })
+    $(`[data-bs-target="#${id}"]`).empty()
+    $(`[data-bs-target="#${id}"]`).append(e.target.value)
+    $(`[data-bs-target="#${id}"]`).append(remove)
+  })
 
   loadFields()
 

@@ -16,6 +16,7 @@ export const defaultOptions = {
     'check_box',
     'upload',
     'color_selection',
+    'check_box_image',
     'autocomplete',
     'button',
     'checkbox-group',

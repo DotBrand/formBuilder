@@ -155,6 +155,35 @@ export default class Helpers {
     return options
   }
 
+  imageFieldOptionData(field) {
+    const options = []
+    const $styleTitle = $('.nav-link', field)
+    const $styleTabs = $('.tab-pane', field)
+
+    $styleTitle.each(i => {
+      const title = $styleTitle[i].innerText.slice(0, -1).replace(/\n/g, '')
+      const $options = $('.sortable-options li', $styleTabs[i])
+
+      const optionData = []
+      $options.each(i => {
+        const file = $('.upload', $options[i]).get(0).files[0]
+        const hashtag = $('input[type=text].from-control', $options[i]).get(0).value
+
+        optionData.push({
+          file: file || '',
+          hashtag: hashtag
+        })
+      })
+
+      options.push({
+        label: title,
+        options: optionData
+      })
+    })
+
+    return options
+  }
+
   /**
    * XML save
    * @param  {Object} form sortableFields node
@@ -276,7 +305,10 @@ export default class Helpers {
 
             const multipleField = fieldData.type && fieldData.type.match(d.optionFieldsRegEx)
 
-            if (multipleField) {
+            if (fieldData.type === 'check_box_image') {
+              fieldData.imageOptions = _this.imageFieldOptionData($field)
+            }
+            else if (multipleField) {
               fieldData.values = _this.fieldOptionData($field)
             }
 
@@ -379,6 +411,9 @@ export default class Helpers {
       ].find(([condition]) => !!condition)[1]()
       fieldData[name] = value
     })
+    const imageData = this.imageFieldOptionData(field)
+    fieldData['imageOptions'] = imageData
+
     return fieldData
   }
 
