@@ -3,9 +3,9 @@ import control from '../../control'
 export default class controlParagraph extends control {
   static get definition() {
     return {
-      icon: '🌟',
+      icon: '<i class="icon icon-paragraph"></i>',
       i18n: {
-        default: 'Paragraph',
+        default: 'PARAGRAPH',
       },
     }
   }

@@ -3,9 +3,9 @@ import control from '../../control'
 export default class controlUpload extends control {
   static get definition() {
     return {
-      icon: '🌟',
+      icon: '<i class="icon icon-file-upload"></i>',
       i18n: {
-        default: 'Upload',
+        default: 'FILE UPLOAD',
       },
     }
   }

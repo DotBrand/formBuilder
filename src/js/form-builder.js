@@ -109,7 +109,7 @@ function FormBuilder(opts, element, $) {
     cancel: ['input', 'select', 'textarea', '.disabled-field', '.form-elements', '.btn', 'button', '.is-locked'].join(
       ', ',
     ),
-    placeholder: 'frmb-placeholder',
+    placeholder: 'ui-state-highlight',
   })
 
   if (!opts.allowStageSort) {
@@ -220,7 +220,7 @@ function FormBuilder(opts, element, $) {
 
   const cbWrap = m('div', d.controls, {
     id: `${data.formID}-cb-wrap`,
-    className: `cb-wrap ${data.layout.controls}`,
+    className: `cb-wrap ${data.layout.controls} col-3`,
   })
 
   if (opts.showActionButtons) {
@@ -325,6 +325,10 @@ function FormBuilder(opts, element, $) {
 
     if (field.questionId == null) {
       field.questionId = -1
+    }
+
+    if ((field.type == 'check_box' || field.type == 'check_box_image') && !field.limit) {
+      field.limit = 3
     }
 
     if (isNew && ['text', 'number', 'file', 'date', 'select', 'textarea', 'autocomplete'].includes(field.type)) {
@@ -513,7 +517,7 @@ function FormBuilder(opts, element, $) {
   }
 
   const defaultFieldAttrs = type => {
-    const defaultAttrs = ['required', 'label', 'description', 'placeholder', 'className', 'name', 'access', 'value', 'questionId']
+    const defaultAttrs = ['required', 'label', 'description', 'className', 'name', 'access', 'value', 'questionId', 'subtitle', 'placeholder']
     const noValFields = ['header', 'file', 'autocomplete'].concat(d.optionFields)
 
     const valueField = !noValFields.includes(type)
@@ -534,7 +538,6 @@ function FormBuilder(opts, element, $) {
         'options',
       ],
       text: defaultAttrs.concat(['subtype', 'maxlength']),
-      date: defaultAttrs,
       file: defaultAttrs.concat(['subtype', 'multiple']),
       header: ['label', 'subtype', 'className', 'access'],
       hidden: ['name', 'value', 'access'],
@@ -542,13 +545,14 @@ function FormBuilder(opts, element, $) {
       select: defaultAttrs.concat(['multiple', 'options']),
       textarea: defaultAttrs.concat(['subtype', 'maxlength', 'rows']),
       // custom control
-      sentence: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
-      paragraph: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name', 'hasOther', 'otherInput'],
+      sentence: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name'],
+      paragraph: ['questionId', 'required', 'label', 'subtitle', 'placeholder', 'className', 'name'],
       radio_selection: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
-      check_box: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'options'],
+      check_box: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'limit', 'options'],
       upload: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput'],
       color_selection: ['questionId', 'required', 'label', 'subtitle', 'className', 'name'],
       check_box_image: ['questionId', 'required', 'label', 'subtitle', 'className', 'name', 'hasOther', 'otherInput', 'limit', 'imageOptions'],
+      date: ['questionId', 'required', 'label', 'subtitle', 'className', 'name'],
     }
 
     if (type in controls.registeredSubtypes && !(type in typeAttrsMap)) {
@@ -601,7 +605,7 @@ function FormBuilder(opts, element, $) {
       description: () => textAttribute('description', values),
       subtype: () => selectAttribute('subtype', values, subtypes[type]),
       style: () => btnStyles(values.style),
-      placeholder: () => textAttribute('placeholder', values),
+      placeholder: () => textAttribute('placeholder', values, false, 'Hint'),
       rows: () => numberAttribute('rows', values),
       className: isHidden => textAttribute('className', values, isHidden),
       name: isHidden => textAttribute('name', values, isHidden),
@@ -970,7 +974,7 @@ function FormBuilder(opts, element, $) {
    * @param  {Object} values
    * @return {String} markup for number attribute
    */
-  const numberAttribute = (attribute, values, isHidden = false) => {
+  const numberAttribute = (attribute, values, isHidden = false, max, min) => {
     const { class: classname, className, value, ...attrs } = values
     const attrVal = attrs[attribute] || value
     const attrLabel = mi18n.get(attribute) || attribute
@@ -983,6 +987,8 @@ function FormBuilder(opts, element, $) {
       placeholder,
       className: `fld-${attribute} form-control ${classname || className || ''}`.trim(),
       id: `${attribute}-${data.lastID}`,
+      max,
+      min,
     }
     const numberAttribute = h.input(trimObj(inputConfig)).outerHTML
     const inputWrap = `<div class="input-wrap">${numberAttribute}</div>`
@@ -1042,7 +1048,7 @@ function FormBuilder(opts, element, $) {
    */
   const textAttribute = (attribute, values, isHidden = false, label) => {
     let attrVal = values[attribute] || ''
-    let attrLabel = mi18n.get(attribute) || label
+    const attrLabel = label || mi18n.get(attribute)
 
     if (attribute === 'label') {
       attrVal = parsedHtml(attrVal)
@@ -1186,7 +1192,7 @@ function FormBuilder(opts, element, $) {
     const prevHolder = m('div', '', { className: 'prev-holder', dataFieldId: data.lastID })
     liContents.push(prevHolder)
 
-    const formElements = m('div', [advFields(values), m('a', mi18n.get('close'), { className: 'close-field' })], {
+    const formElements = m('div', [advFields(values), m('a', 'CONFIRM', { className: 'close-field' })], {
       className: 'form-elements',
     })
 
@@ -1294,7 +1300,10 @@ function FormBuilder(opts, element, $) {
         h.toggleEdit(data.lastID, false)
       }
       if (field.scrollIntoView && opts.scrollToFieldOnAdd) {
-        field.scrollIntoView({ behavior: 'smooth' })
+        window.scrollTo({
+          behavior: 'smooth',
+          top: field.getBoundingClientRect().top - document.body.getBoundingClientRect().top - 200
+        })
       }
     }
 
@@ -1631,14 +1640,12 @@ function FormBuilder(opts, element, $) {
 
     optionData = { ...optionTemplate, ...optionData }
 
-    const groupName = `selected-${Date.now()}`
     const optionInputs = Object.entries(optionData).map(([prop, val]) => {
       const optionInputDataType = getContentType(val)
 
       const [tag, content, attrs] = optionInputTypeMap[optionInputDataType](val, prop)
       const optionClassName = `option-${prop} option-attr`
       attrs['data-attr'] = prop
-      attrs['name'] = groupName
       attrs.className = attrs.className ? `${attrs.className} ${optionClassName}` : optionClassName
 
       return m(tag, content, attrs)
@@ -1820,6 +1827,8 @@ function FormBuilder(opts, element, $) {
     const value = target.value || target.innerHTML
     const label = closest(target, '.form-field').querySelector('.field-label')
     label.innerHTML = parsedHtml(value)
+
+    $('.form-wrap.form-builder').trigger('formDataSave')
   })
 
   // remove error styling when users tries to correct mistake
@@ -1970,6 +1979,13 @@ function FormBuilder(opts, element, $) {
 
   // Delete field
   $stage.on('click touchstart', '.delete-confirm', e => {
+    let confirmText = 'Are you sure you want to delete this question?\n'
+    confirmText += `"${$(e.target).parent().siblings('.field-label').text()}"\n`
+    confirmText += 'It\'s IRREVERSIBLE!'
+    console.log($(e.target).parent().siblings('.field-label').text())
+
+    if (!confirm(confirmText)) return
+
     e.preventDefault()
 
     const buttonPosition = e.target.getBoundingClientRect()
@@ -2559,6 +2575,11 @@ function FormBuilder(opts, element, $) {
     $(`[data-bs-target="#${id}"]`).empty()
     $(`[data-bs-target="#${id}"]`).append(e.target.value)
     $(`[data-bs-target="#${id}"]`).append(remove)
+  })
+
+  $stage.on('change paste keyup', 'input[type=text].option-label', e => {
+    const valueInput = $(e.target).siblings('input.option-value')
+    $(valueInput).val(hyphenCase(e.target.value))
   })
 
   loadFields()

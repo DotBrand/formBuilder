@@ -3,9 +3,9 @@ import control from '../../control'
 export default class controlCheckbox extends control {
   static get definition() {
     return {
-      icon: '🌟',
+      icon: '<i class="icon icon-checkbox"></i>',
       i18n: {
-        default: 'Checkbox Selection',
+        default: 'MULTIPLE SELECTION',
       },
     }
   }

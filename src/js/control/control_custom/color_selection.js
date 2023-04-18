@@ -10,9 +10,9 @@ const colorObj = {
 export default class controlColorSelection extends control {
   static get definition() {
     return {
-      icon: '🌟',
+      icon: '<i class="icon icon-color-selection"></i>',
       i18n: {
-        default: 'Color Selection',
+        default: 'COLOR SELECTION',
       },
     }
   }

@@ -3,9 +3,9 @@ import control from '../../control'
 export default class controlRadioSelection extends control {
     static get definition() {
         return {
-            icon: '🌟',
+            icon: '<i class="icon icon-radio-selection"></i>',
             i18n: {
-                default: 'Radio Selection',
+                default: 'SINGLE SELECTION',
             },
         }
     }

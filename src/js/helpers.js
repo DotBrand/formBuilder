@@ -372,6 +372,9 @@ export default class Helpers {
 
     // trigger formSaved event
     document.dispatchEvent(events.formSaved)
+
+    $('.form-wrap.form-builder').trigger('formDataSave')
+
     return data.formData
   }
 
@@ -1200,7 +1203,7 @@ export default class Helpers {
 
     d.stage = m('ul', null, {
       id,
-      className: `frmb stage-wrap ${data.layout.stage}`,
+      className: `frmb stage-wrap ${data.layout.stage} col-9`,
     })
 
     // Create container for controls

@@ -74,7 +74,7 @@ export const defaultOptions = {
   roles: {
     1: 'Administrator',
   },
-  scrollToFieldOnAdd: true,
+  scrollToFieldOnAdd: false,
   showActionButtons: true,
   sortableControls: false,
   stickyControls: {

@@ -88,12 +88,12 @@ export default class Controls {
 
       // if the class has specified a custom icon, inject it into the label
       if (icon) {
-        label = `<span class="control-icon">${icon}</span>${label}`
+        label = `<div class="control-icon">${icon}</div><div>${label}</div>`
       }
 
       // build & insert the new list item to represent this control
-      const newFieldControl = m('li', m('span', label), {
-        className: `${iconClassName} input-control input-control-${i}`,
+      const newFieldControl = m('li', m('div', label, { className: 'd-flex align-items-center', style: 'color: #490e67;' }), {
+        className: `${iconClassName} input-control input-control-${i} mb-2 p-0`,
       })
       newFieldControl.dataset.type = type
       this.controlList.push(type)
