@@ -1672,6 +1672,7 @@ function FormBuilder(opts, element, $) {
     const $clone = currentItem.clone()
 
     $('.fld-name', $clone).val(cloneName)
+    $('.fld-questionId', $clone).val(-1)
     $clone.find('[id]').each((i, elem) => {
       elem.id = elem.id.replace(currentId, data.lastID)
     })
